@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="edit-container">
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Volver al Panel</a>
+    <h2>Editar Semana {{ week_num }} - Día {{ day_num }}</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Título del Día</label>
+            <input type="text" name="title" id="title" value="{{ content.title }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descripción / Contenido (Texto largo)</label>
+            <textarea name="description" id="description" rows="10">{{ content.description }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="links">Enlaces (uno por línea)</label>
+            <textarea name="links" id="links" rows="5" placeholder="https://ejemplo.com">{{ content.links }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="files">Subir Archivos (PDF, Imágenes)</label>
+            <input type="file" name="new_files" id="files" multiple>
+        </div>
+        
+        {% if content.files %}
+        <div class="existing-files">
+            <p>Archivos actuales:</p>
+            <ul>
+                {% for file in content.files %}
+                <li>{{ file.original }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <button type="submit">Guardar Cambios</button>
+    </form>
+</div>
+{% endblock %}

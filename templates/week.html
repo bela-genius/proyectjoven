@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="week-container">
+    <a href="{{ url_for('index') }}" class="back-link">← Volver al inicio</a>
+    <h2 class="week-title">Semana {{ week_num }}</h2>
+    
+    <div class="days-container">
+        {% for i in range(1, 4) %}
+        <div class="day-card">
+            <h3>{{ days[i].title }}</h3>
+            <div class="day-content">
+                <p style="white-space: pre-wrap;">{{ days[i].description }}</p>
+                
+                {% if days[i].links %}
+                <div class="links-section">
+                    <h4>Enlaces de interés:</h4>
+                    <ul>
+                    {% for link in days[i].links %}
+                        <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if days[i].files %}
+                <div class="files-section">
+                    <h4>Archivos adjuntos:</h4>
+                    <ul>
+                    {% for file in days[i].files %}
+                        <li><a href="{{ url_for('static', filename='uploads/' + file.saved) }}" target="_blank">{{ file.original }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
