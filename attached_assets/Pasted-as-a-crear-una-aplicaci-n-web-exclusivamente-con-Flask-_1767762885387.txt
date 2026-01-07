@@ -1,0 +1,154 @@
+as a crear una aplicación web exclusivamente con Flask (Python).
+No uses TypeScript, Node.js, React, Next.js, Astro, ni ningún framework frontend moderno.
+Si no puedes trabajar únicamente con Flask, detente y no continúes.
+
+El proyecto debe funcionar completamente en el plan gratuito de Replit, sin requerir Replit Core, servicios pagos, APIs externas ni almacenamiento en la nube.
+
+CONTEXTO DEL PROYECTO
+
+La aplicación corresponde al Programa Nacional Jóvenes en Paz, una iniciativa del Gobierno de Colombia, orientada a la inclusión social, la construcción de paz y el fortalecimiento del tejido comunitario juvenil.
+
+Esta plataforma se centra específicamente en el Componente de Corresponsabilidad, el cual promueve:
+
+La participación juvenil en procesos comunitarios.
+
+La construcción colectiva de paz desde el territorio.
+
+El reconocimiento de las juventudes como sujetas de derechos.
+
+El desarrollo de acciones colectivas con impacto social.
+
+La plataforma funciona como un espacio pedagógico digital, no como una red social ni un sistema de mensajería.
+
+ESTRUCTURA DEL PROGRAMA EN LA PLATAFORMA
+
+El contenido debe estar organizado en un proceso formativo de:
+
+15 semanas
+
+3 días por semana
+
+Cada semana representa una etapa del proceso pedagógico y cada día corresponde a una unidad de trabajo (actividad, reflexión, lectura o acción comunitaria).
+
+DESCRIPCIÓN DETALLADA DE LA INTERFAZ
+Página principal
+
+Encabezado con el título:
+Programa Nacional Jóvenes en Paz
+Componente de Corresponsabilidad
+
+Diseño limpio, institucional y juvenil.
+
+Colores suaves, tipografía legible, enfoque accesible.
+
+Vista de tarjetas o bloques representando cada semana (Semana 1 a Semana 15).
+
+Cada tarjeta de semana puede desplegar o redirigir a la vista de sus tres días.
+
+Vista de semana
+
+Muestra claramente:
+
+Semana correspondiente
+
+Día 1, Día 2 y Día 3
+
+Cada día contiene:
+
+Título
+
+Texto descriptivo
+
+Enlaces (si aplica)
+
+Archivos adjuntos (PDF, imágenes)
+
+Los jóvenes solo pueden visualizar esta información.
+
+ACCESO ADMINISTRATIVO (DISEÑO Y COMPORTAMIENTO)
+
+En la esquina superior de la página principal existe un logo pequeño y discreto.
+
+Este logo no indica explícitamente “admin”.
+
+Al hacer clic en el logo, se redirige a un login desarrollado en Flask.
+
+Credenciales únicas y fijas:
+
+Usuario: yaquehernandez
+
+Contraseña: 32272940
+
+No existe registro de usuarios ni recuperación de contraseña.
+
+PANEL DEL ADMINISTRADOR (DETALLADO)
+
+Una vez autenticado, el administrador accede a un panel donde puede:
+
+Crear y editar semanas (1 a 15).
+
+Agregar contenidos por cada día de la semana.
+
+Escribir texto largo (descripciones, guías, reflexiones).
+
+Agregar enlaces externos informativos.
+
+Subir archivos:
+
+PDF
+
+Imágenes
+
+Asociar cada archivo a una semana y un día específicos.
+
+Los archivos deben guardarse localmente en:
+/static/uploads
+
+ALMACENAMIENTO Y PERSISTENCIA
+
+La información de contenidos debe guardarse usando:
+
+SQLite o
+
+archivos JSON locales
+
+No usar bases de datos externas.
+
+No usar Firebase, Supabase, MongoDB ni servicios similares.
+
+RESTRICCIONES OBLIGATORIAS
+
+No usar ni sugerir Replit Core.
+
+No convertir el proyecto a TypeScript.
+
+No usar autenticación de terceros.
+
+No usar APIs externas.
+
+No usar frameworks frontend.
+
+ENTREGA ESPERADA
+
+Estructura completa del proyecto Flask.
+
+app.py funcional.
+
+Carpetas templates/ y static/.
+
+Templates para:
+
+Página principal
+
+Vista de semana
+
+Login
+
+Panel admin
+
+Ejemplo funcional de subida de archivos.
+
+Instrucciones claras para ejecutar el proyecto en Replit.
+
+Este proyecto debe ser 100% Flask.
+Si no puedes cumplir exactamente estas condiciones, detente.
