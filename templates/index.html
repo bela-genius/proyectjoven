@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="hero-section" style="background-image: linear-gradient(rgba(255, 77, 148, 0.4), rgba(74, 21, 44, 0.8)), url('{{ url_for('static', filename='images/hero.jpg') }}');">
+<div class="hero-section">
     <div class="hero-content">
-        <h2>Construyendo Paz desde el Territorio</h2>
-        <p>Un espacio para la inclusión social y el fortalecimiento del tejido comunitario de las juventudes colombianas.</p>
+        <h2>Paz en el Corazón,<br>Cambio en el Barrio</h2>
+        <p>Tu espacio de crecimiento, reflexión y acción comunitaria.</p>
         <div class="hero-stats">
             <div class="stat-item">
-                <span class="stat-num">100k</span>
-                <span class="stat-label">Jóvenes Meta</span>
-            </div>
-            <div class="stat-item">
                 <span class="stat-num">15</span>
-                <span class="stat-label">Semanas de Ruta</span>
+                <span class="stat-label">Semanas</span>
             </div>
             <div class="stat-item">
                 <span class="stat-num">100%</span>
@@ -25,19 +21,19 @@
 <div class="info-section">
     <div class="info-grid">
         <div class="info-card">
-            <div class="info-icon">🎯</div>
+            <div class="info-icon">✨</div>
             <h3>Propósito</h3>
-            <p>La corresponsabilidad es el trabajo comunitario que fortalece a las juventudes como agentes transformadores de paz.</p>
+            <p>Convertirnos en agentes de cambio real para nuestras comunidades.</p>
         </div>
         <div class="info-card">
-            <div class="info-icon">👥</div>
+            <div class="info-icon">🌸</div>
             <h3>Participación</h3>
-            <p>Dirigido a jóvenes entre 14 y 28 años en situación de vulnerabilidad, promoviendo su liderazgo territorial.</p>
+            <p>Un lugar donde tu voz cuenta y tus acciones transforman.</p>
         </div>
         <div class="info-card">
-            <div class="info-icon">🌱</div>
+            <div class="info-icon">💫</div>
             <h3>Impacto</h3>
-            <p>Acciones colectivas que transforman realidades y generan oportunidades de crecimiento personal y social.</p>
+            <p>Construyendo historias de paz que inspiran a otros.</p>
         </div>
     </div>
 </div>
@@ -45,10 +41,10 @@
 <div class="weeks-grid">
     {% for i in range(1, 16) %}
     <a href="{{ url_for('week_view', week_num=i) }}" class="week-card">
-        <div class="week-status">Semana en curso</div>
-        <span class="week-label">Etapa</span>
+        <div class="week-status">Ruta de Paz</div>
+        <span class="week-label">Semana</span>
         <span class="week-number">{{ i }}</span>
-        <div class="week-footer">Explorar Actividades →</div>
+        <div class="week-footer">Ver actividades</div>
     </a>
     {% endfor %}
 </div>

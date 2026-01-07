@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jóvenes en Paz - Corresponsabilidad</title>
+    <title>Jóvenes en Paz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
         <div class="header-container">
             <div class="logo-area">
-                <h1>Programa Nacional Jóvenes en Paz</h1>
-                <h2>Componente de Corresponsabilidad</h2>
+                <h1>Jóvenes en Paz</h1>
+                <h2>Corresponsabilidad</h2>
             </div>
             <a href="{{ url_for('login') }}" class="admin-login-link">
-                <div class="admin-logo" title="Acceso Administrativo"></div> <!-- Discreet logo -->
+                <div class="admin-logo"></div>
             </a>
         </div>
     </header>
@@ -22,19 +25,15 @@
     <main>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            <ul class="flashes">
+            <div class="flashes">
             {% for message in messages %}
-              <li>{{ message }}</li>
+              <div class="flash-item">{{ message }}</div>
             {% endfor %}
-            </ul>
+            </div>
           {% endif %}
         {% endwith %}
         
         {% block content %}{% endblock %}
     </main>
-
-    <footer>
-        <p>Programa Nacional Jóvenes en Paz &copy; 2024</p>
-    </footer>
 </body>
 </html>
