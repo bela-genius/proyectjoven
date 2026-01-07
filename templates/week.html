@@ -10,14 +10,24 @@
         <div class="day-card">
             <h3>{{ days[i].title }}</h3>
             <div class="day-content">
-                <p style="white-space: pre-wrap;">{{ days[i].description }}</p>
+                {% if days[i].description %}
+                <p style="white-space: pre-wrap; margin-bottom: 1.5rem;">{{ days[i].description }}</p>
+                {% endif %}
+
+                {% if days[i].activities %}
+                <ul class="activities-list">
+                    {% for activity in days[i].activities %}
+                    <li>{{ activity }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 
                 {% if days[i].links %}
                 <div class="links-section">
-                    <h4>Enlaces de interés:</h4>
-                    <ul>
+                    <h4>🔗 Enlaces útiles</h4>
+                    <ul style="list-style: none; padding: 0;">
                     {% for link in days[i].links %}
-                        <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ link }}" target="_blank">{{ link }}</a></li>
                     {% endfor %}
                     </ul>
                 </div>
@@ -25,10 +35,10 @@
                 
                 {% if days[i].files %}
                 <div class="files-section">
-                    <h4>Archivos adjuntos:</h4>
-                    <ul>
+                    <h4>📂 Documentación</h4>
+                    <ul style="list-style: none; padding: 0;">
                     {% for file in days[i].files %}
-                        <li><a href="{{ url_for('static', filename='uploads/' + file.saved) }}" target="_blank">{{ file.original }}</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('static', filename='uploads/' + file.saved) }}" target="_blank">📄 {{ file.original }}</a></li>
                     {% endfor %}
                     </ul>
                 </div>
