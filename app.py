@@ -42,6 +42,11 @@ def init_db():
                 PRIMARY KEY (week, day)
             )
         ''')
+        # Check if activities column exists, if not add it (simple migration)
+        try:
+            db.execute('SELECT activities FROM daily_content LIMIT 1')
+        except sqlite3.OperationalError:
+            db.execute('ALTER TABLE daily_content ADD COLUMN activities TEXT')
         db.commit()
 
 ADMIN_USER = 'yaquehernandez'
