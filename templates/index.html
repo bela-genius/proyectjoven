@@ -3,7 +3,7 @@
 {% block content %}
 <div class="hero-section">
     <div class="hero-content">
-        <h2>Paz en el Corazón,<br>Cambio en el Barrio</h2>
+        <h2>Paz en el Corazón,<br>Cambio en el Territorio</h2>
         <p>Tu espacio de crecimiento, reflexión y acción comunitaria.</p>
         <div class="hero-stats">
             <div class="stat-item">
@@ -38,7 +38,7 @@
     {% for i in range(1, 16) %}
     <a href="{{ url_for('week_view', week_num=i) }}" class="week-card">
         <div class="week-status">Ruta de Paz</div>
-        <span class="week-label">Etapa</span>
+        <span class="week-label">Semana</span>
         <span class="week-number">{{ i }}</span>
         <div class="week-footer">Ver actividades</div>
     </a>
