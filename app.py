@@ -42,11 +42,25 @@ def init_db():
                 PRIMARY KEY (week, day)
             )
         ''')
-        # Check if activities column exists, if not add it (simple migration)
-        try:
-            db.execute('SELECT activities FROM daily_content LIMIT 1')
-        except sqlite3.OperationalError:
-            db.execute('ALTER TABLE daily_content ADD COLUMN activities TEXT')
+        
+        # Comprehensive column check and migration
+        columns = [info[1] for info in db.execute("PRAGMA table_info(daily_content)").fetchall()]
+        
+        needed_columns = {
+            'activities': 'TEXT',
+            'links': 'TEXT',
+            'files': 'TEXT',
+            'description': 'TEXT',
+            'title': 'TEXT'
+        }
+        
+        for col, col_type in needed_columns.items():
+            if col not in columns:
+                try:
+                    db.execute(f'ALTER TABLE daily_content ADD COLUMN {col} {col_type}')
+                except sqlite3.OperationalError:
+                    pass
+                    
         db.commit()
 
 ADMIN_USER = 'yaquehernandez'
@@ -68,8 +82,8 @@ def week_view(week_num):
         row = cur.fetchone()
         if row:
             days_data[i] = {
-                'title': row['title'],
-                'description': row['description'],
+                'title': row['title'] if row['title'] else f'Día {i}',
+                'description': row['description'] if row['description'] else '',
                 'activities': json.loads(row['activities']) if row['activities'] else [],
                 'links': json.loads(row['links']) if row['links'] else [],
                 'files': json.loads(row['files']) if row['files'] else []
@@ -107,27 +121,22 @@ def edit_day(week_num, day_num):
     db = get_db()
     
     if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
+        title = request.form.get('title', f'Día {day_num}')
+        description = request.form.get('description', '')
         
-        # Activities (one per line)
-        activities_text = request.form['activities']
+        activities_text = request.form.get('activities', '')
         activities_list = [a.strip() for a in activities_text.splitlines() if a.strip()]
         
-        # Links
-        links_text = request.form['links']
+        links_text = request.form.get('links', '')
         links_list = [l.strip() for l in links_text.splitlines() if l.strip()]
         
-        # Existing Files
         cur = db.execute('SELECT files FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num))
         row = cur.fetchone()
         existing_files = json.loads(row['files']) if row and row['files'] else []
         
-        # Remove files if requested
         files_to_remove = request.form.getlist('remove_files')
         existing_files = [f for f in existing_files if f['saved'] not in files_to_remove]
 
-        # New uploads
         uploaded_files = request.files.getlist('new_files')
         for file in uploaded_files:
             if file and file.filename:
@@ -142,13 +151,14 @@ def edit_day(week_num, day_num):
         ''', (week_num, day_num, title, description, json.dumps(activities_list), json.dumps(links_list), json.dumps(existing_files)))
         db.commit()
         
+        flash('¡Contenido actualizado!')
         return redirect(url_for('admin_dashboard'))
     
     cur = db.execute('SELECT * FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num))
     row = cur.fetchone()
     content = {
-        'title': row['title'] if row else f'Actividad Día {day_num}',
-        'description': row['description'] if row else '',
+        'title': row['title'] if row and row['title'] else f'Día {day_num}',
+        'description': row['description'] if row and row['description'] else '',
         'activities': '\n'.join(json.loads(row['activities'])) if row and row['activities'] else '',
         'links': '\n'.join(json.loads(row['links'])) if row and row['links'] else '',
         'files': json.loads(row['files']) if row and row['files'] else []
