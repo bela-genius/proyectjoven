@@ -162,7 +162,6 @@ def edit_day(week_num, day_num):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 existing_evidence.append({'original': filename, 'saved': unique_filename})
         
-        db = get_db()
         db.execute('''
             INSERT OR REPLACE INTO daily_content (week, day, title, description, activities, links, files, evidence)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -184,6 +183,14 @@ def edit_day(week_num, day_num):
     
     return render_template('edit_day.html', week_num=week_num, day_num=day_num, content=content)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('index.html'), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template('index.html'), 500
+
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=False)
