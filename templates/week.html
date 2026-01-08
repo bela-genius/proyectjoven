@@ -43,6 +43,19 @@
                     </ul>
                 </div>
                 {% endif %}
+
+                {% if days[i].evidence %}
+                <div class="evidence-section" style="margin-top: 1.5rem; border-top: 1px dashed var(--primary-light); padding-top: 1rem;">
+                    <h4 style="color: var(--primary-dark);">📸 Evidencias</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 0.5rem;">
+                    {% for file in days[i].evidence %}
+                        <a href="{{ url_for('static', filename='uploads/' + file.saved) }}" target="_blank">
+                            <img src="{{ url_for('static', filename='uploads/' + file.saved) }}" alt="{{ file.original }}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        </a>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

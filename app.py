@@ -21,6 +21,12 @@ def get_db():
         db.row_factory = sqlite3.Row
     return db
 
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
@@ -39,6 +45,7 @@ def init_db():
                 activities TEXT,
                 links TEXT,
                 files TEXT,
+                evidence TEXT,
                 PRIMARY KEY (week, day)
             )
         ''')
@@ -51,7 +58,8 @@ def init_db():
             'links': 'TEXT',
             'files': 'TEXT',
             'description': 'TEXT',
-            'title': 'TEXT'
+            'title': 'TEXT',
+            'evidence': 'TEXT'
         }
         
         for col, col_type in needed_columns.items():
@@ -72,24 +80,23 @@ def index():
 
 @app.route('/week/<int:week_num>')
 def week_view(week_num):
-    if week_num < 1 or week_num > 15:
+    if not (1 <= week_num <= 15):
         return redirect(url_for('index'))
     
-    db = get_db()
     days_data = {}
     for i in range(1, 4):
-        cur = db.execute('SELECT * FROM daily_content WHERE week = ? AND day = ?', (week_num, i))
-        row = cur.fetchone()
+        row = query_db('SELECT * FROM daily_content WHERE week = ? AND day = ?', (week_num, i), one=True)
         if row:
             days_data[i] = {
-                'title': row['title'] if row['title'] else f'Día {i}',
-                'description': row['description'] if row['description'] else '',
+                'title': row['title'] or f'Día {i}',
+                'description': row['description'] or '',
                 'activities': json.loads(row['activities']) if row['activities'] else [],
                 'links': json.loads(row['links']) if row['links'] else [],
-                'files': json.loads(row['files']) if row['files'] else []
+                'files': json.loads(row['files']) if row['files'] else [],
+                'evidence': json.loads(row['evidence']) if row['evidence'] else []
             }
         else:
-            days_data[i] = {'title': f'Día {i}', 'description': '', 'activities': [], 'links': [], 'files': []}
+            days_data[i] = {'title': f'Día {i}', 'description': '', 'activities': [], 'links': [], 'files': [], 'evidence': []}
             
     return render_template('week.html', week_num=week_num, days=days_data)
 
@@ -123,19 +130,21 @@ def edit_day(week_num, day_num):
     if request.method == 'POST':
         title = request.form.get('title', f'Día {day_num}')
         description = request.form.get('description', '')
-        
         activities_text = request.form.get('activities', '')
-        activities_list = [a.strip() for a in activities_text.splitlines() if a.strip()]
-        
         links_text = request.form.get('links', '')
+        
+        activities_list = [a.strip() for a in activities_text.splitlines() if a.strip()]
         links_list = [l.strip() for l in links_text.splitlines() if l.strip()]
         
-        cur = db.execute('SELECT files FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num))
-        row = cur.fetchone()
+        row = query_db('SELECT files, evidence FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num), one=True)
         existing_files = json.loads(row['files']) if row and row['files'] else []
+        existing_evidence = json.loads(row['evidence']) if row and row['evidence'] else []
         
         files_to_remove = request.form.getlist('remove_files')
         existing_files = [f for f in existing_files if f['saved'] not in files_to_remove]
+        
+        evidence_to_remove = request.form.getlist('remove_evidence')
+        existing_evidence = [e for e in existing_evidence if e['saved'] not in evidence_to_remove]
 
         uploaded_files = request.files.getlist('new_files')
         for file in uploaded_files:
@@ -145,23 +154,32 @@ def edit_day(week_num, day_num):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 existing_files.append({'original': filename, 'saved': unique_filename})
         
+        uploaded_evidence = request.files.getlist('new_evidence')
+        for file in uploaded_evidence:
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                unique_filename = f"evidence_{uuid.uuid4()}_{filename}"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
+                existing_evidence.append({'original': filename, 'saved': unique_filename})
+        
+        db = get_db()
         db.execute('''
-            INSERT OR REPLACE INTO daily_content (week, day, title, description, activities, links, files)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (week_num, day_num, title, description, json.dumps(activities_list), json.dumps(links_list), json.dumps(existing_files)))
+            INSERT OR REPLACE INTO daily_content (week, day, title, description, activities, links, files, evidence)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (week_num, day_num, title, description, json.dumps(activities_list), json.dumps(links_list), json.dumps(existing_files), json.dumps(existing_evidence)))
         db.commit()
         
         flash('¡Contenido actualizado!')
         return redirect(url_for('admin_dashboard'))
     
-    cur = db.execute('SELECT * FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num))
-    row = cur.fetchone()
+    row = query_db('SELECT * FROM daily_content WHERE week = ? AND day = ?', (week_num, day_num), one=True)
     content = {
         'title': row['title'] if row and row['title'] else f'Día {day_num}',
         'description': row['description'] if row and row['description'] else '',
         'activities': '\n'.join(json.loads(row['activities'])) if row and row['activities'] else '',
         'links': '\n'.join(json.loads(row['links'])) if row and row['links'] else '',
-        'files': json.loads(row['files']) if row and row['files'] else []
+        'files': json.loads(row['files']) if row and row['files'] else [],
+        'evidence': json.loads(row['evidence']) if row and row['evidence'] else []
     }
     
     return render_template('edit_day.html', week_num=week_num, day_num=day_num, content=content)

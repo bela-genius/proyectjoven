@@ -27,9 +27,30 @@
         </div>
         
         <div class="form-group">
-            <label>Subir nuevos archivos</label>
+            <label>Subir nuevos archivos (Documentos)</label>
             <input type="file" name="new_files" multiple>
         </div>
+        
+        <div class="form-group">
+            <label>Subir Evidencias (Fotos/Imágenes)</label>
+            <input type="file" name="new_evidence" multiple accept="image/*">
+        </div>
+
+        {% if content.evidence %}
+        <div class="form-group">
+            <label>Evidencias actuales (marcar para borrar)</label>
+            <div style="background: #fff9fb; padding: 1rem; border-radius: 12px; border: 1px solid #ffe4ef; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;">
+                {% for file in content.evidence %}
+                <div style="position: relative;">
+                    <img src="{{ url_for('static', filename='uploads/' + file.saved) }}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
+                    <label style="display: block; font-size: 0.7rem; text-align: center;">
+                        <input type="checkbox" name="remove_evidence" value="{{ file.saved }}"> Borrar
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
         
         {% if content.files %}
         <div class="form-group">
