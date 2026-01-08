@@ -38,14 +38,15 @@
 
         {% if content.evidence %}
         <div class="form-group">
-            <label>Evidencias actuales (marcar para borrar)</label>
-            <div style="background: #fff9fb; padding: 1rem; border-radius: 12px; border: 1px solid #ffe4ef; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;">
+            <label>Evidencias actuales</label>
+            <div style="background: #fff9fb; padding: 1rem; border-radius: 12px; border: 1px solid #ffe4ef; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;">
                 {% for file in content.evidence %}
-                <div style="position: relative;">
+                <div style="position: relative; background: white; padding: 5px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <img src="{{ url_for('static', filename='uploads/' + file.saved) }}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
-                    <label style="display: block; font-size: 0.7rem; text-align: center;">
-                        <input type="checkbox" name="remove_evidence" value="{{ file.saved }}"> Borrar
-                    </label>
+                    <div style="margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <input type="checkbox" name="remove_evidence" value="{{ file.saved }}" id="del_ev_{{ loop.index }}" style="cursor: pointer;">
+                        <label for="del_ev_{{ loop.index }}" style="font-size: 0.75rem; color: #cc0000; cursor: pointer; margin: 0;">Borrar esto</label>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -54,13 +55,13 @@
         
         {% if content.files %}
         <div class="form-group">
-            <label>Gestionar archivos actuales (marcar para borrar)</label>
+            <label>Documentación actual</label>
             <div style="background: #fff9fb; padding: 1rem; border-radius: 12px; border: 1px solid #ffe4ef;">
                 {% for file in content.files %}
-                <div class="file-item">
-                    <span>{{ file.original }}</span>
-                    <label style="margin: 0; font-size: 0.8rem; color: var(--primary-dark);">
-                        <input type="checkbox" name="remove_files" value="{{ file.saved }}" class="remove-check"> Borrar
+                <div class="file-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; margin-bottom: 5px; border-radius: 6px;">
+                    <span style="font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">📄 {{ file.original }}</span>
+                    <label style="margin: 0; font-size: 0.75rem; color: #cc0000; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="checkbox" name="remove_files" value="{{ file.saved }}" style="cursor: pointer;"> Borrar esto
                     </label>
                 </div>
                 {% endfor %}
