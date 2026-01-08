@@ -56,6 +56,14 @@
                     </div>
                 </div>
                 {% endif %}
+
+                <div class="student-upload" style="margin-top: 1.5rem; padding: 1rem; background: #fff9fb; border-radius: 12px; border: 1px solid #ffe4ef;">
+                    <h4 style="font-size: 0.9rem; color: var(--primary); margin-bottom: 0.5rem;">📤 Subir mi evidencia</h4>
+                    <form action="{{ url_for('upload_evidence', week=week_num, day=i) }}" method="post" enctype="multipart/form-data" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="file" name="evidence_file" accept="image/*" required style="font-size: 0.8rem; flex: 1;">
+                        <button type="submit" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Enviar</button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endfor %}

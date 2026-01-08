@@ -100,6 +100,45 @@ def week_view(week_num):
             
     return render_template('week.html', week_num=week_num, days=days_data)
 
+@app.route('/upload_evidence/<int:week>/<int:day>', methods=['POST'])
+def upload_evidence(week, day):
+    if 'evidence_file' not in request.files:
+        flash('No se seleccionó ningún archivo')
+        return redirect(url_for('week_view', week_num=week))
+    
+    file = request.files['evidence_file']
+    if file.filename == '':
+        flash('No se seleccionó ningún archivo')
+        return redirect(url_for('week_view', week_num=week))
+    
+    if file:
+        filename = secure_filename(file.filename)
+        unique_filename = f"student_{uuid.uuid4()}_{filename}"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
+        
+        db = get_db()
+        row = query_db('SELECT evidence FROM daily_content WHERE week = ? AND day = ?', (week, day), one=True)
+        evidence_list = json.loads(row['evidence']) if row and row['evidence'] else []
+        evidence_list.append({'original': filename, 'saved': unique_filename, 'student': True})
+        
+        db.execute('''
+            INSERT OR REPLACE INTO daily_content (week, day, evidence)
+            VALUES (?, ?, ?)
+        ''', (week, day, json.dumps(evidence_list)))
+        # Si ya existe registro, INSERT OR REPLACE borraría lo demás si no lo manejamos con cuidado.
+        # Mejoramos la lógica para no perder los datos existentes del día:
+        if row:
+            db.execute('UPDATE daily_content SET evidence = ? WHERE week = ? AND day = ?', 
+                      (json.dumps(evidence_list), week, day))
+        else:
+            db.execute('INSERT INTO daily_content (week, day, evidence, title, description, activities, links, files) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                      (week, day, json.dumps(evidence_list), f'Día {day}', '', '[]', '[]', '[]'))
+        
+        db.commit()
+        flash('¡Evidencia subida con éxito!')
+        
+    return redirect(url_for('week_view', week_num=week))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
